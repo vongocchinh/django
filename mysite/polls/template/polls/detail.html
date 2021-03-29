@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail</title>
+
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'
+      crossorigin='anonymous'></script>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'polls/index.css' %}"
+      />
+  </head>
+  <body>
+    {% include 'polls/header.html' %}
+    <div class="container-index">
+      <div class="container-result-index-left">
+        <div class="container-result-index-left-list">
+          <h3><strong>Tên Khảo Sát:</strong> {{ question.question_text }}</h3>
+          {% if error_message %}<p class="error"><strong>{{error_message }}</strong></p>{%endif%}
+          <form action="{% url 'polls:vote' question.id %}"
+            method="post">
+            {% csrf_token %}
+            {% for choice in question.choice_set.all %}
+            <div class="container-result-left-layout-1">
+              <div class="item-input">
+                <input type="radio" name="choice" id="choice{{
+                  forloop.counter }}"
+                  value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{choice.choice_text }}</label>
+              </div>
+              <div class="option">
+                <a title="xóa" href="{% url 'polls:delete_c' question.id choice.id %}"><i class="fa fa-trash"></i></a>
+                <!-- <a href="{% url 'polls:update_choice' question.id choice.id %}">Edit</a> -->
+              </div>
+            </div>
+            {% endfor %}
+            <div class="option-sb">
+              <input type="submit" value="Submit">
+            </div>
+          </form>
+          <div class="option-button">
+            <a class="call-back" href="{% url 'polls:index'%}">Quay lai</a>
+            <a class="call-back" href="{% url 'polls:add' question.id %}">Thêm</a>
+            <a class="call-back" href="{% url 'polls:review_choice' question.id %}">Xem</a>
+          </div>
+        </div>
+      </div>
+      <div class="container-result-index-left">
+        <div class="chart-container">
+          <canvas id="pie-chart"></canvas>
+        </div>
+        <div class="container-result-index-left-text ">
+          <p>Biểu đồ thể hiện số lượng đánh giá .</p>
+        </div>
+        
+      </div>
+    </div>
+    {% include 'polls/footer.html' %}
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+  var arr={{data}};
+  var colorArr=[];
+  for(let i=0;i<arr.length;i++){
+    var randomColor = Math.floor(Math.random()*16777215).toString(16);
+      colorArr.push("#"+randomColor);
+  }
+   var config = {
+     type: 'pie',
+     data: {
+       datasets: [{
+         data: {{ data |safe }},
+         backgroundColor: colorArr,
+         label: 'Population'
+       }],
+       labels: {{ labels |safe }}
+     },
+     options: {
+       responsive: true
+     }
+   };
+
+   window.onload = function() {
+     var ctx = document.getElementById('pie-chart').getContext('2d');
+     window.myPie = new Chart(ctx, config);
+   };
+
+ </script>
+</html>

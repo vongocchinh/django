@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Result</title>
+  {% load static %}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'polls/index.css' %}" />
+</head>
+
+<body>
+  {% include 'polls/header.html' %}
+  <div class="container">
+    <div class="container-form">
+      <form action="{% url 'polls:update_question_success' question.id %}" method="POST">
+          {% csrf_token %}
+          <label class="questionText" for="fname">Question name</label>
+          <input type="text" id="fname" name="question_text" value="{{question.question_text }}" placeholder="name..">
+          <input type="submit" value="Submit">
+        </form>
+    </div>
+
+  </div>
+  {% include 'polls/footer.html' %}
+</body>
+</html>

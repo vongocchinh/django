@@ -1,0 +1,134 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  {% load static %}
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'polls/index.css' %}"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'polls/style.css' %}"
+/>
+</head>
+
+<body>
+
+  {% include 'polls/header.html' %}
+  <div class="container-index">
+    <div class="container-result-index-left">
+      <div class="container-result-index-left-list">
+        <div class="option-title-add">
+          <h1>Danh sách khảo sát</h1>
+          <a class="btn-add" href="{% url 'polls:add_question'%}">Thêm</a>
+        </div>
+        {% if latest_question_list %}
+        <ul class="option-list-menu-text">
+          {% for question in latest_question_list %}
+          <li class="menu-item">
+            <a class="option-text" href="{% url 'polls:detail' question.id %}"
+              >{{ question.question_text }}</a>
+            <div class="option-delete">
+              <a title="xóa" href="{%url 'polls:delete_question' question.id %}"><i class="fa fa-trash"></i></a>
+              <a title="chỉnh sửa" href="{%url 'polls:update_question' question.id %}"><i class='fas fa-edit'></i></a>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No polls are available.</p>
+        {% endif %}
+
+      </div>
+    </div>
+    <div class="container-result-index-right">
+      <div class="container-result-index-right-layout">
+        <div>
+          <div class="margin-chart">
+            <div>
+              <p><strong>Thành viên nhóm :</strong></p>
+             <ul>
+               <li>Võ Ngọc Chính</li>
+               <li>Trần Văn Nghĩa</li>
+               <li>Nguyễn Hưu Lộc</li>
+               <li>Phạm Thủy Vi</li>
+             </ul>
+            </div>
+         </div>
+          <canvas id="myChart" width="320" height="400" ></canvas>
+          <div class="container-tile-chart">
+            {% for question in latest_question_list %}
+              <p class="tile-chart">{{question.id}} : {{ question.question_text }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'polls/footer.html' %}
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+  var arr=[];
+  arr={{data_chart}};
+  var data_text=[];
+  // data_text=({{data_text}});
+  console.log(data_text);
+  var arrCharts=[];
+  for(let i=0;i<arr.length;i++){
+    arrCharts.push( arr[i]);
+  }
+  var tong=0;
+  var arrTong=[];
+  for(let i=0;i<arrCharts.length;i++){
+    arrChartsNew=arrCharts[i];
+    tong=0;
+    for(let j=0;j<arrChartsNew.length;j++){
+        tong+=arrChartsNew[j];
+    }
+    arrTong.push(tong);
+  }
+  console.log(arrTong);
+  var colorArr=[];
+
+  for(let i=0;i<arrTong.length;i++){
+    var randomColor = Math.floor(Math.random()*16777215).toString(16);
+      colorArr.push("#"+randomColor);
+  }
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels:{{data}},
+        datasets: [{
+            label: 'Số Lượng vote các chủ đề',
+            data: arrTong,
+            backgroundColor: colorArr,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
+</script>
+</html>
